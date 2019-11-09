@@ -1,0 +1,74 @@
+When working in a ring of integers modulo b, the Barrett reduction is a method which can be used to perform a modular reduction.
+
+To compute
+
+c = a mod b
+
+Where a, b, and c are positive integers, the following equation can be used.
+
+c = a - floor(a/b) * b
+
+Since multiplication is signifcantly more efficient to implement than division in hardware,
+
+instead of dividing by b, multiplying by 1/b is preferred.
+
+
+The value of b can allow for simpler binary algorithms:
+
+If b is a power of two, 2^n, the result of a mod b may be taken as the last n bits of a.
+
+Otherwise, the Barrett reduction can be used.
+
+
+Note that a positive rational number can be uniquely represented as n / m,
+
+where n and m are both positive integers with no common facators.
+
+This rational number has a finite length representation in binary form if and only if m is a power of two.
+
+Therefore, the value of 1/b will only have a finite length representation in binary if b is a power of two.
+
+However, in this case, it is not efficient to use the Barrett reduction.
+
+Thus, the value 1/b can not be exactly represented in binary.
+
+
+Since 1/b can only be approximated, the Barrett reduction
+
+c = a - floor(a * 1/b) * b
+
+cannot be done precisely. There are two cases:
+
+1) Approximate value of 1/b > 1/b.
+
+In this case, the result in floor(a * 1/b) can be erroneously incremented by 1.
+
+This result on the value of c is that there may be an integer underflow.
+
+2) Approximate value of 1/b < 1/b.
+
+In this case, the result in floor(a * 1/b) can be erroneously decremented by 1.
+
+This result on the value of c is that the result may be greater than b.
+
+In either case, the simplest way to address this is to limit the magnitude of the error.
+
+If a is an n bit number, limiting the error of 1/b to 2^(-n) has the following results:
+
+The error of a * 1/b is limited to 2^(0) = 1.
+
+The error of floor(a * 1/b) is limited to 1.
+
+The error of floor(a * 1/b) * b is limited to b.
+
+The error of c = a - floor(a * 1/b) * b is limited to b.
+
+Therefore with a simple corrective step at the end, the exact result can be found.
+
+Assume c' is the calculated value before the corrective step and c is the value after.
+
+For case 1): If c' > b, c = c' + b, else c = c'.
+
+For case 2): If c' > b, c = c' - b, else c = c'.
+
+Note that c' should have a length in bits of 1 more than b.

@@ -39,7 +39,7 @@ def write_multiplier(b, b_size, a_size):
     name = "multiplier_" + str(a_size) + "bits_by_" + str(b)
     io = "a_inv_b_floor  :  in unsigned (" + str(a_size - 1) + " downto 0);\n    "\
          + "b_a_inv_b_floor  :  out unsigned (" + str(a_size - 1) + " downto 0)\n"
-    signal_comps = "signal b  :  unsigned (" + str(b_size - 1) + " downto 0) := to_unsigned(" + str(b) + "," + str(b_size) + ");\n"
+    signal_comps = "constant b  :  unsigned (" + str(b_size - 1) + " downto 0) := to_unsigned(" + str(b) + "," + str(b_size) + ");\n"
     process = "process(clk)\nbegin\n  if rising_edge(clk) then\n    "\
               + "b_a_inv_b_floor <= a_inv_b_floor * b;\n  end if;\nend process;"
     f = open("template.txt", "r")
@@ -52,7 +52,20 @@ def write_multiplier(b, b_size, a_size):
 
 def write_subtractor_and_comparator(b, b_size, a_size):
     name = "subtract_" + str(b) + "_and_reduce"
-    io = "b_a_inv_b_floor  :  out unsigned (" + str(b_size + a_size - 1) + " downto 0)\n"
+    io = "b_a_inv_b_floor  :  in unsigned (" + str(b_size + a_size - 1) + " downto 0);\n    "\
+         + "a  :  in unsigned (" + str(a_size - 1) + " downto 0);\n    "\
+         + "c  :  out unsigned (" + str(b_size - 1) + " downto 0)\n"
+    signal_comps = "signal sub_res  :  unsigned (" + str(b_size) + " downto 0);\n"
+    process = "process(clk)\nbegin\n  if rising_edge(clk) then\n    "\
+              + "sub_res <= a - b_a_inv_b_floor;\n    if sub_res >= " + str(b) + " then\n      c <= sub_res - " + str(b)\
+              + ";\n    else\n      c <= sub_res - 0;\n    end if;\n  end if;\nend process;"
+    f = open("template.txt", "r")
+    lines = ""
+    for line in f:
+        lines += line.replace("[1]", name).replace("[2]", io).replace("[3]", signal_comps).replace("[4]", process)
+    f.close()
+    f = open(name + ".vhd", "w")
+    f.write(lines)
 
 if __name__ == "__main__":
     print("c = a mod b")
@@ -85,5 +98,6 @@ if __name__ == "__main__":
     inv_b = find_inverse(b, max_error)
     write_multiplier_floor(inv_b, a_size)
     write_multiplier(b, b_size, a_size)
+    write_subtractor_and_comparator(b, b_size, a_size)
     
     

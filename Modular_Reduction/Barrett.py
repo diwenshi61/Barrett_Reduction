@@ -38,7 +38,7 @@ def write_multiplier_floor(inv_b, a_size):
 def write_multiplier(b, b_size, a_size):
     name = "multiplier_" + str(a_size) + "bits_by_" + str(b)
     io = "a_inv_b_floor  :  in unsigned (" + str(a_size - 1) + " downto 0);\n    "\
-         + "b_a_inv_b_floor  :  out unsigned (" + str(b_size + a_size - 1) + " downto 0)\n"
+         + "b_a_inv_b_floor  :  out unsigned (" + str(a_size - 1) + " downto 0)\n"
     signal_comps = "signal b  :  unsigned (" + str(b_size - 1) + " downto 0) := to_unsigned(" + str(b) + "," + str(b_size) + ");\n"
     process = "process(clk)\nbegin\n  if rising_edge(clk) then\n    "\
               + "b_a_inv_b_floor <= a_inv_b_floor * b;\n  end if;\nend process;"
@@ -50,6 +50,9 @@ def write_multiplier(b, b_size, a_size):
     f = open(name + ".vhd", "w")
     f.write(lines)
 
+def write_subtractor_and_comparator(b, b_size, a_size):
+    name = "subtract_" + str(b) + "_and_reduce"
+    io = "b_a_inv_b_floor  :  out unsigned (" + str(b_size + a_size - 1) + " downto 0)\n"
 
 if __name__ == "__main__":
     print("c = a mod b")

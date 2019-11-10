@@ -78,3 +78,9 @@ a                    ->            3) a
 -----------------------------------------------------
 
 Note that the initial value a needs to be reused going into the third step.
+
+## Compatibility
+
+Written for Python 2.7. Modifications needed to use with Python 3 (e.g. replacing raw_input).
+
+Works with VHDL-1993 - does not require 2008.

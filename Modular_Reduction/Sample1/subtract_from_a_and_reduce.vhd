@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity subtract_7681_and_reduce is
+entity subtract_from_a_and_reduce is
   port
   (
     clk  :  in std_logic;
@@ -11,9 +11,9 @@ entity subtract_7681_and_reduce is
     c  :  out unsigned (12 downto 0)
 
   );
-end subtract_7681_and_reduce;
+end subtract_from_a_and_reduce;
 
-architecture rtl of subtract_7681_and_reduce is
+architecture rtl of subtract_from_a_and_reduce is
 signal sub_res  :  unsigned (13 downto 0);
 
 

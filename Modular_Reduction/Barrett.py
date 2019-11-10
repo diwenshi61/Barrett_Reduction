@@ -61,7 +61,7 @@ def write_multiplier(b, b_size, a_size, zeros_count):
     f.write(lines)
 
 def write_subtractor_and_comparator(b, b_size, a_size):
-    name = "subtract_" + str(b) + "_and_reduce"
+    name = "subtract_from_a_and_reduce"
     io = "b_a_inv_b_floor  :  in unsigned (" + str(a_size - 1) + " downto 0);\n    "\
          + "a  :  in unsigned (" + str(a_size - 1) + " downto 0);\n    "\
          + "c  :  out unsigned (" + str(b_size - 1) + " downto 0)\n"

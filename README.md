@@ -49,7 +49,7 @@ c = a mod b
 
 These files are generated for a bit width of 30 bits for a and the value of 7681 for b.
 
-The ports should be connected as follows, where the left side denotes the required inputs and the right side the required outputs:
+The ports should be connected as follows, where the left side denotes the required inputs and the right side the outputs:
 
 1) refers to multiplier_by_100010001000001111.vhd
 
@@ -59,21 +59,21 @@ The ports should be connected as follows, where the left side denotes the requir
 
 -----------------------------------------------------
 
-`a                    ->            1) a`
+`a                    |            1) a`
 
 -----------------------------------------------------
 
-`1) a_inv_b           ->            2) a_inv_b_floor`
+`1) a_inv_b           |            2) a_inv_b_floor`
 
 -----------------------------------------------------
 
-`2) b_a_inv_b_floor   ->            3) b_a_inv_b_floor`
+`2) b_a_inv_b_floor   |            3) b_a_inv_b_floor`
 
-`a                    ->            3) a`
+`a                    |            3) a`
 
 -----------------------------------------------------
 
-`3) c                 ->            c`
+`3) c                 |            c`
 
 -----------------------------------------------------
 

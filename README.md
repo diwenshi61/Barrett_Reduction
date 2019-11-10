@@ -51,31 +51,39 @@ These files are generated for a bit width of 30 bits for a and the value of 7681
 
 The ports should be connected as follows, where the left side denotes the required inputs and the right side the outputs:
 
-1) refers to multiplier_by_100010001000001111.vhd
+<pre>
 
-2) refers to multiplier_17bits_by_7681.vhd
+  0) refers to inputs
 
-3) refers to subtract_from_a_and_reduce.vhd
+  1) refers to multiplier_by_100010001000001111.vhd
 
------------------------------------------------------
+  2) refers to multiplier_17bits_by_7681.vhd
 
-a                    |            1) a
+  3) refers to subtract_from_a_and_reduce.vhd
+  
+  4) refers to outputs
 
------------------------------------------------------
+  -----------------------------------------------------
 
-1) a_inv_b           |            2) a_inv_b_floor
+  0) a                 |            1) a
 
------------------------------------------------------
+  -----------------------------------------------------
 
-2) b_a_inv_b_floor   |            3) b_a_inv_b_floor
+  1) a_inv_b           |            2) a_inv_b_floor
 
-a                    |            3) a
+  -----------------------------------------------------
 
------------------------------------------------------
+  2) b_a_inv_b_floor   |            3) b_a_inv_b_floor
 
-3) c                 |            c
+  0) a                 |            3) a
 
------------------------------------------------------
+  -----------------------------------------------------
+
+  3) c                 |            4) c
+
+  -----------------------------------------------------
+
+</pre>
 
 Note that the initial value a needs to be reused going into the third step.
 

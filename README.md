@@ -57,16 +57,27 @@ The ports should be connected as follows, where the left side denotes the requir
 
 3) refers to subtract_from_a_and_reduce.vhd
 
+<div>
 -----------------------------------------------------
+
 a                    |            1) a
+
 -----------------------------------------------------
+
 1) a_inv_b           |            2) a_inv_b_floor
+
 -----------------------------------------------------
+
 2) b_a_inv_b_floor   |            3) b_a_inv_b_floor
+
 a                    |            3) a
+
 -----------------------------------------------------
+
 3) c                 |            c
+
 -----------------------------------------------------
+</div>
 
 Note that the initial value a needs to be reused going into the third step.
 

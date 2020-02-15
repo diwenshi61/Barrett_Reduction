@@ -1,6 +1,6 @@
 # Modular Reduction
 
-A python script that generates VHDL files describing steps for a modular reduction in hardware
+A python script that generates VHDL files describing steps for a modular reduction in hardware.
 
 ## Usage
 
@@ -8,11 +8,11 @@ A modular reduction is described by the equation
 
 c = a mod b
 
-Where a and b are positive integers.
+where a and b are positive integers.
 
 Two inputs are required to generate the Barrett reduction code:
 
-- The maximum bit width of the value a
+- The maximum bit width of a
 
 - The value of b
 
@@ -24,14 +24,14 @@ This script creates three VHDL files containing three steps to perform a Barrett
 
 3) Subtraction and reducing
 
-See "Barrett_reduction_in_hardware.txt" for a complete explanation of how these steps are calculated and done.
+See "Barrett_reduction_in_hardware.txt" for a complete explanation of these steps.
 
 These hardware components are mostly bare bones and are not connected by a top level component and no testbenches are generated.
 
 Depending on the size of the multiplies, it would make sense to separate the multiplication steps into multiple cycles,
 and add more in/outs to the components as necessary, such as a reset, a start signal, a done signal.
 
-Large multiplies are generally slow and not suited to be done in a single clock cycle, which the VHDL generated is describing.
+Large multiplies are generally slow and not suited to be done in a single clock cycle, which the generated VHDL describes.
 
 ## Sample
 
@@ -49,32 +49,46 @@ c = a mod b
 
 These files are generated for a bit width of 30 bits for a and the value of 7681 for b.
 
-The ports should be connected as follows, where the left side denotes the input and the right side the output:
+The ports should be connected as follows, where the left side denotes the required inputs and the right side the outputs:
 
-1) refers to multiplier_by_100010001000001111.vhd
+<pre>
 
-2) refers to multiplier_17bits_by_7681.vhd
+  0) refers to inputs
 
-3) refers to subtract_from_a_and_reduce.vhd
+  1) refers to multiplier_by_100010001000001111.vhd
 
------------------------------------------------------
+  2) refers to multiplier_17bits_by_7681.vhd
 
-a                    ->            1) a
+  3) refers to subtract_from_a_and_reduce.vhd
+  
+  4) refers to outputs
 
------------------------------------------------------
+  -----------------------------------------------------
 
-1) a_inv_b           ->            2) a_inv_b_floor
+  0) a                 |            1) a
 
------------------------------------------------------
+  -----------------------------------------------------
 
-2) b_a_inv_b_floor   ->            3) b_a_inv_b_floor
+  1) a_inv_b           |            2) a_inv_b_floor
 
-a                    ->            3) a
+  -----------------------------------------------------
 
------------------------------------------------------
+  2) b_a_inv_b_floor   |            3) b_a_inv_b_floor
 
-3) c                 ->            c
+  0) a                 |            3) a
 
------------------------------------------------------
+  -----------------------------------------------------
+
+  3) c                 |            4) c
+
+  -----------------------------------------------------
+
+</pre>
 
 Note that the initial value a needs to be reused going into the third step.
+
+## Compatibility
+
+Written for Python 2.7. Modifications needed to use with Python 3 (e.g. replacing raw_input).
+
+Works with VHDL-1993 - does not require 2008.

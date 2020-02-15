@@ -1,66 +1,80 @@
-# Password Manager
-A basic password manager utility that allows a user to encrypt passwords under a master password that is used to decrypt them later.
+# Modular Reduction
 
+A python script that generates VHDL files describing steps for a modular reduction in hardware
 
-## Usage steps
-The user initially creates a file containing their passwords named "passwords.txt" (The name of the files the program uses can be changed by modifying the code).
+## Usage
 
-The first line of the file contains a list of passwords and the passwords are stored on subsequent lines.
+A modular reduction is described by the equation
 
-The user then can encrypt this file running encrypt_decrypt2.0.py, with options to encrypt, decrypt, or remove the passwords.txt file.
+c = a mod b
 
-When encrypting, the user must create a master password and confirm it by typing it again.
+Where a and b are positive integers.
 
-A encrypted file called "encrypted.txt" is created and the "passwords.txt" file is overwritten multiple times and then deleted.
+Two inputs are required to generate the Barrett reduction code:
 
-To decrypt the file, the master password is required, and a "passwords.txt" file is regenerated from the encrypted file.
+- The maximum bit width of the value a
 
+- The value of b
 
-## "Known Answer Tests" (KATs) a.k.a. test vectors
-There are five KATs in the repo.
+This script creates three VHDL files containing three steps to perform a Barrett reduction in order:
 
-Each KAT contains a passwords.txt file, an encrypted.txt file, and a parameters.txt file which lists the parameters used.
+1) Multiplication by a decimal value and flooring
 
-The parameters are:
+2) Multiplication by an integer value
 
-- GLOBAL_LENGTH: This is set in encrypt_decrypt2.0.py, and is equivalent to the line length in encrypted.txt.
-- LOOPS: This is set in encrypt_decrypt2.0.py.
-The processing power required to encrypt/decrypt or attempt a brute force attack scales approximately linearly with this value.
-- Master Password: The master password used to encrypt or decrypt.
+3) Subtraction and reducing
 
-KAT1 contains a simple example.
+See "Barrett_reduction_in_hardware.txt" for a complete explanation of how these steps are calculated and done.
 
-KAT2 contains an example of the resulting "passwords.txt" file regenerated from the same encrypted file as KAT1,
-but using a slightly incorrect master password. The resulting "passwords.txt" file is significantly different (and incorrect relative to KAT1).
+These hardware components are mostly bare bones and are not connected by a top level component and no testbenches are generated.
 
-KAT3 contains an example of the resulting "passwords.txt" file regenerated from the same encrypted file as KAT1,
-but using a different LOOPS parameter. The resulting "passwords.txt" file is significantly different (and incorrect relative to KAT1).
+Depending on the size of the multiplies, it would make sense to separate the multiplication steps into multiple cycles,
+and add more in/outs to the components as necessary, such as a reset, a start signal, a done signal.
 
-KAT4 contains an example of the resulting "encrypted.txt" file generated from the same "passwords.txt" file as KAT1,
-but with a different password. The resulting "encrypted.txt" file is significantly different.
+Large multiplies are generally slow and not suited to be done in a single clock cycle, which the VHDL generated is describing.
 
-KAT5 contains an example of the resulting "encrypted.txt" file generated from the same "passwords.txt" file as KAT1,
-but with a slightly different password of the same length. The resulting "encrypted.txt" file is significantly different.
+## Sample
 
+An example of the generated files is included. The files describe the steps above:
 
-## Security
-The encryption scheme uses the modulus of SHA-256 (of the SHA-2 standard) hashes to secure the passwords.
-Therefore the security of the scheme relies in part on the security of SHA-2.
+1) multiplier_by_100010001000001111.vhd <==> Multiplication by a decimal value and flooring
 
-One concern is that if passwords are added and the same master password is used to encrypt, an attacker can gain information if they
-have access to the original encrypted file and the new encrypted file.
+2) multiplier_17bits_by_7681.vhd <==> Multiplication by an integer value
 
-A positive point on the security is that practically speaking, any guess at the master password can "unencrypt" the encrypted file.
-However, only the correct master password gives the correct unencrypted file.
-Therefore, it can be quite difficult for an attacker to distinguish between the correct master password and incorrect master passwords.
+3) subtract_from_a_and_reduce.vhd <==> Subtraction and reducing
 
-Side channel attacks on the encryption phase can reveal information about the parameters used and information about the master password.
-Side channel attacks on the decryption phase can additionally reveal information on the length of passwords.
+Recall the modular reduction equation
 
+c = a mod b
 
-## Compatibility
-Written and tested for python 2.7 on Windows.
+These files are generated for a bit width of 30 bits for a and the value of 7681 for b.
 
-Needs minor changes for python 3 (e.g. replace uses of raw_input).
+The ports should be connected as follows, where the left side denotes the input and the right side the output:
 
-May have compatibility issues on other platforms.
+1) refers to multiplier_by_100010001000001111.vhd
+
+2) refers to multiplier_17bits_by_7681.vhd
+
+3) refers to subtract_from_a_and_reduce.vhd
+
+-----------------------------------------------------
+
+a                    ->            1) a
+
+-----------------------------------------------------
+
+1) a_inv_b           ->            2) a_inv_b_floor
+
+-----------------------------------------------------
+
+2) b_a_inv_b_floor   ->            3) b_a_inv_b_floor
+
+a                    ->            3) a
+
+-----------------------------------------------------
+
+3) c                 ->            c
+
+-----------------------------------------------------
+
+Note that the initial value a needs to be reused going into the third step.

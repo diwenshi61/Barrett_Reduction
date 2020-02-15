@@ -1,4 +1,0 @@
-GLOBAL_LENGTH = 4200
-LOOPS = 1
-
-Master Password: 12345678
